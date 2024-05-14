@@ -20,8 +20,8 @@ Player::~Player()
 void Player::Initialize()
 {
 	//画像の読み込み
-	animation[0] = LoadGraph("Resource / Images / Tri - pilot / 1.png");
-	animation[1] = LoadGraph("Resource / Images / Tri - pilot / 2.png");
+	animation[0] = LoadGraph("Resource/Images/Tri-pilot/1.png");
+	animation[1] = LoadGraph("Resource/Images/Tri-pilot/2.png");
 
 	//エラーチェック
 	if (animation[0] == -1 || animation[1] == -1)
@@ -33,7 +33,7 @@ void Player::Initialize()
 	radian = 0.0f;
 
 	//大きさの設定
-	box_size = Vector2D(64.0f);
+	box_size = 64.0f;
 
 	//初期画像の設定
 	image = animation[0];
@@ -53,15 +53,15 @@ void Player::Draw()const
 	//プレイヤー画像の描画
 	DrawRotaGraphF(location.x, location.y, 1.0, radian, image, TRUE, flip_flag);
 
-//デバッグ用
+	//デバッグ用
 #if _DEBUG
-	 //当たり判定の可視化
-	Vector2D ul = location - (box_size / 2.0f);
-	Vector2D br = location + (box_size / 2.0f);
-	DrawBoxAA(ul.x, ul.y, br.x, br.y, GetColor(255, 0, 0), FALSE);
+	//当たり判定の可視化
+	Vector2D box_collision_upper_left = location - (box_size / 2.0f);
+	Vector2D box_collision_lower_right = location + (box_size / 2.0f);
+	DrawBoxAA(box_collision_upper_left.x, box_collision_upper_left.y, box_collision_lower_right.x, box_collision_lower_right.y, GetColor(255, 0, 0), FALSE);
 
 #endif
-	
+
 }
 
 //終了時処理

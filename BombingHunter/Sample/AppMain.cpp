@@ -18,12 +18,13 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		return -1;
 	}
 
-	//ローカル変数定義
-	Scene* scene = new Scene();     //シーン情報
-	int result = 0;                 //終了状態情報
 
 	//描画先を裏画面から始めるように指定する
 	SetDrawScreen(DX_SCREEN_BACK);
+
+	//ローカル変数定義
+	Scene* scene = new Scene();     //シーン情報
+	int result = 0;                 //終了状態情報
 
 	try
 	{
@@ -31,7 +32,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		scene->Initialize();
 
 		//メインループ（ウィンドウの異常発生 or ESCキーが押されたら、ループ終了）
-		while (ProcessMessage() != -1 && CheckHitKey(KEY_INPUT_ESCAPE) != TRUE)
+		while (ProcessMessage() != -1 && InputControl::GetKeyUp(KEY_INPUT_ESCAPE) == false)
 		{
 			//入力機能の更新
 			InputControl::Update();

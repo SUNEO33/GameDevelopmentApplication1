@@ -109,7 +109,7 @@ const Vector2D Vector2D::operator/(const float& scalar)const
 	}
 	return Vector2D(this->x / scalar, this->y / scalar);
 }
-const Vector2D Vector2D::operator*(const Vector2D& location)const
+const Vector2D Vector2D::operator/(const Vector2D& location)const
 {
 	if ((fabsf(location.x) < 1e-6f) || (fabsf(location.y) < 1e-6f))
 	{

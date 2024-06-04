@@ -2,6 +2,10 @@
 #include "Utility/InputControl.h"
 #include "Scene/Scene.h"
 
+//背景画像
+int back_img1;
+//BGM
+int background_sound;
 //メイン関数（プログラムはここから始まります。）
 int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nShowCmd)
 {
@@ -17,7 +21,8 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		//異常を通知
 		return -1;
 	}
-
+	// BGMの読み込み
+	background_sound = LoadSoundMem("Resource/sounds/Evaluation/BGM_arrows.wav");
 
 
 	//ローカル変数定義
@@ -27,14 +32,18 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	//描画先を裏画面から始めるように指定する
 	SetDrawScreen(DX_SCREEN_BACK);
 
+
 	try
 	{
+		//BGMの再生
+		PlaySoundMem(background_sound, DX_PLAYTYPE_BACK, FALSE);
 		//シーンの初期化
 		scene->Initialize();
 
 		//メインループ（ウィンドウの異常発生 or ESCキーが押されたら、ループ終了）
 		while (ProcessMessage() != -1 && CheckHitKey(KEY_INPUT_ESCAPE) != TRUE)
 		{
+			
 			//入力機能の更新
 			InputControl::Update();
 
@@ -44,8 +53,13 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 			//画面の初期化
 			ClearDrawScreen();
 
+			//背景画像
+			back_img1 = LoadGraph("Resource/Images/BackGround.png");
+			DrawGraph(0, -180, back_img1, TRUE);
+
 			//シーンの描画処理
 			scene->Draw();
+
 
 			//裏画面の内容を表画面に反映する
 			ScreenFlip();

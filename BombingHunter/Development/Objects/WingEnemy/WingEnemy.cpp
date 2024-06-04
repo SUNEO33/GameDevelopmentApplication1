@@ -1,32 +1,32 @@
-#include "Player.h"
+#include "WingEnemy.h"
 #include "../../Utility/InputControl.h"
 #include "DxLib.h"
 
 
 //コンストラクタ
-Player::Player() : animation_count(0), flip_flag(FALSE)
+WingEnemy::WingEnemy() : animation_count(0), flip_flag(FALSE)
 {
-	animation[0] = NULL;
-	animation[1] = NULL;
+	anima[0] = NULL;
+	anima[1] = NULL;
 }
 
 //デストラクタ
-Player::~Player()
+WingEnemy::~WingEnemy()
 {
 
 }
 
 //初期化処理
-void Player::Initialize()
+void WingEnemy::Initialize()
 {
 	//画像の読み込み
-	animation[0] = LoadGraph("Resource/Images/Tri-pilot/1.png");
-	animation[1] = LoadGraph("Resource/Images/Tri-pilot/2.png");
+	anima[0] = LoadGraph("Resource/Images/WingEnemy/1.png");
+	anima[1] = LoadGraph("Resource/Images/WingEnemy/2.png");
 
 	//エラーチェック
-	if (animation[0] == -1 || animation[1] == -1)
+	if (anima[0] == -1 || anima[1] == -1)
 	{
-		throw("トリパイロットの画像がありません\n");
+		throw("ウィングエネミーの画像がありません\n");
 	}
 
 
@@ -37,23 +37,29 @@ void Player::Initialize()
 	box_size = 64.0f;
 
 	//初期画像の設定
-	image = animation[0];
+	image = anima[0];
 }
 
 //更新処理
-void Player::Update()
+void WingEnemy::Update()
 {
+	location.x += 1.0f;     //位置情報の更新
+
+	if (location.x >= 640.0f)
+	{
+		location.x = 0.0f;
+	}
 	//移動処理
-	Movement();
+	//Movement();
 	//アニメーション制御
 	AnimationControl();
 }
 //描画処理
-void Player::Draw()const
+void WingEnemy::Draw()const
 {
-	//プレイヤー画像の描画
-	DrawRotaGraphF(location.x, location.y, 0.5, radian, image, TRUE, flip_flag);
-
+	//ウィングエネミー画像の描画
+	DrawRotaGraphF(location.x, 390, 0.5, radian, image, TRUE, flip_flag);
+	
 	//デバッグ用
 #if _DEBUG
 	//当たり判定の可視化
@@ -66,20 +72,20 @@ void Player::Draw()const
 }
 
 //終了時処理
-void Player::Finalize()
+void WingEnemy::Finalize()
 {
 	//使用した画像を開放する
-	DeleteGraph(animation[0]);
-	DeleteGraph(animation[1]);
+	DeleteGraph(anima[0]);
+	DeleteGraph(anima[1]);
 }
 
 //当たり判定通知処理
-void Player::OnHitCollision(GameObject* hit_object)
+void WingEnemy::OnHitCollision(GameObject* hit_object)
 {
 	//当たった時の処理
 }
 //移動処理
-void Player::Movement()
+void WingEnemy::Movement()
 {
 	//移動の速さ
 	Vector2D velocity = 0.0f;
@@ -99,28 +105,12 @@ void Player::Movement()
 	{
 		velocity.x += 0.0f;
 	}
-	//上下移動
-	if (InputControl::GetKey(KEY_INPUT_UP))
-	{
-		velocity.y += -1.0f;
-		flip_flag = TRUE;
-	}
-	else if (InputControl::GetKey(KEY_INPUT_DOWN))
-	{
-		velocity.y += 1.0f;
-		flip_flag = FALSE;
-	}
-	else
-	{
-		velocity.x += 0.0f;
-	}
-
 	//現在の位置情報に速さを加算する
 	location += velocity;
 }
 
 //アニメーション制御
-void Player::AnimationControl()
+void WingEnemy::AnimationControl()
 {
 	//フレームカウントを加算する
 	animation_count++;
@@ -132,13 +122,13 @@ void Player::AnimationControl()
 		animation_count = 0;
 
 		//画像の切り替え
-		if (image == animation[0])
+		if (image == anima[0])
 		{
-			image = animation[1];
+			image = anima[1];
 		}
 		else
 		{
-			image = animation[0];
+			image = anima[0];
 		}
 	}
 }

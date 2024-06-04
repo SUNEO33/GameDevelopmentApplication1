@@ -1,6 +1,9 @@
 #include "Scene.h"
 #include "../Objects/Player/Player.h"
 #include "../Objects/Enemy/Enemy.h"
+#include "../Objects/WingEnemy/WingEnemy.h"
+#include "../Objects/Bullet/Bullet.h"
+#include "../Objects/Harpy/Harpy.h"
 #include "../Utility/InputControl.h"
 #include "DxLib.h"
 
@@ -24,6 +27,10 @@ void Scene::Initialize()
 {
 	//プレイヤーを生成する
 	CreateObject<Player>(Vector2D(320.0f, 240.0f));
+	//ウィングエネミーを生成する
+	CreateObject<WingEnemy>(Vector2D(320.0f, 240.0f));
+
+	
 }
 
 //更新処理
@@ -45,11 +52,29 @@ void Scene::Update()
 		}
 	}
 
-	//zキーを押したら、敵を生成する
+	//Zキーを押したら、ハコテキを生成する
 	if (InputControl::GetKeyDown(KEY_INPUT_Z))
 	{
-		CreateObject<Enemy>(Vector2D(100.0f, 400.0f));
+		CreateObject<Enemy>(Vector2D(100.0f, 0.0f));
 	}
+
+	//Xキーを押したら、ハーピーを生成する
+	if (InputControl::GetKeyDown(KEY_INPUT_X))
+	{
+		CreateObject<Harpy>(Vector2D(100.0f, 0.0f));
+	}
+
+	//スペースキーを押したら、弾丸を生成する
+	if (InputControl::GetKeyDown(KEY_INPUT_SPACE)) {
+		for (int i = 0; i < objects.size(); i++)
+		{
+			if (!(dynamic_cast<Player*>(objects[i]) == nullptr))
+			{
+				CreateObject<Bullet>(objects[i]->GetLocation());
+			}
+		}
+	}
+	
 }
 
 //描画処理

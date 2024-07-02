@@ -1,5 +1,7 @@
 #include "Harpy.h"
+#include "../../Objects/Bullet/Bullet.h"
 #include "DxLib.h"
+#include "../../Objects/Player/Player.h"
 
 
 //コンストラクタ
@@ -33,19 +35,19 @@ void Harpy::Initialize()
 	radian = 0.0f;
 
 	//大きさの設定
-	box_size = 64.0f;
+	box_size = 32.0f;
 
 	//初期画像の設定
 	image = animation[0];
 
 	//初期進行方向の設定
-	direction = Vector2D(1.0f, -0.5f);
+	direction = Vector2D(1.0f, 0.0f);
 }
 
 //更新処理
 void Harpy::Update()
 {
-	location.x += 1.0f;     //位置情報の更新
+	location.x += 1.5f;
 
 	if (location.x >= 640.0f)
 	{
@@ -75,10 +77,11 @@ void Harpy::Draw()const
 	}
 
 	//情報を基にハーピー画像を描画する
-	DrawRotaGraphF(location.x, 300.0, 0.5, radian, image, TRUE, flip_flag);
+	DrawRotaGraphF(location.x, location.y, 0.5, radian, image, TRUE, flip_flag);
 
 	//親クラスの描画処理を呼び出す
 	__super::Draw();
+
 }
 
 //終了時処理
@@ -92,6 +95,25 @@ void Harpy::Finalize()
 //当たり判定通知処理
 void Harpy::OnHitCollision(GameObject* hit_object)
 {
+	if (dynamic_cast<Harpy*>(hit_object) != nullptr)   
+	{
+		BulletSeartch = false;
+	}
+	else if (dynamic_cast<Player*>(hit_object) != nullptr)   
+	{
+		BulletSeartch = false;
+	}
+	else
+	{
+		BulletSeartch = true;
+	}
+	//if (dynamic_cast<Bullet*>(hit_object))   //弾丸に当たった時にハーピーを消す処理
+	//{
+	//	direction = 0.0f;
+	//	box_size = 0.0f;
+	//	Finalize();
+
+	//}
 	//当たった時の処理
 	direction = 0.0f;
 }

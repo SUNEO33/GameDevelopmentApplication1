@@ -13,6 +13,7 @@ protected:
 	double radian;            //向き
 	int image;                //描画する画像
 	int sound;                //再生する音源
+	
 
 public:
 	GameObject();
@@ -22,6 +23,8 @@ public:
 	virtual void Update();           //更新処理
 	virtual void Draw() const;       //描画処理
 	virtual void Finalize();         //終了時処理
+	bool DeleteObject();		
+	bool BulletSeartch;		
 
 	//当たり判定通知処理
 	virtual void OnHitCollision(GameObject* hit_object);

@@ -7,7 +7,6 @@ private:
 	int animation[2];     //アニメーション画像
 	int animation_count;  //アニメーション時間
 	Vector2D direction;      //反転フラグ
-
 public:
 	Enemy();
 	~Enemy();

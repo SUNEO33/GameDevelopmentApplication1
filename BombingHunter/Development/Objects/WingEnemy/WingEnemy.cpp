@@ -1,13 +1,14 @@
 #include "WingEnemy.h"
-#include "../../Utility/InputControl.h"
+#include "../../Objects/Bullet/Bullet.h"
+#include "../../Objects/Player/Player.h"
 #include "DxLib.h"
 
 
 //コンストラクタ
-WingEnemy::WingEnemy() : animation_count(0), flip_flag(FALSE)
+WingEnemy::WingEnemy() : animation_count(0), direction(0.0f)
 {
-	anima[0] = NULL;
-	anima[1] = NULL;
+	animation[0] = NULL;
+	animation[1] = NULL;
 }
 
 //デストラクタ
@@ -20,93 +21,118 @@ WingEnemy::~WingEnemy()
 void WingEnemy::Initialize()
 {
 	//画像の読み込み
-	anima[0] = LoadGraph("Resource/Images/WingEnemy/1.png");
-	anima[1] = LoadGraph("Resource/Images/WingEnemy/2.png");
+	animation[0] = LoadGraph("Resource/Images/WingEnemy/1.png");
+	animation[1] = LoadGraph("Resource/Images/WingEnemy/2.png");
+
 
 	//エラーチェック
-	if (anima[0] == -1 || anima[1] == -1)
+	if (animation[0] == -1 || animation[1] == -1)
 	{
-		throw("ウィングエネミーの画像がありません\n");
+		throw("ウィングエネミー敵の画像がありません\n");
 	}
-
 
 	//向きの設定
 	radian = 0.0f;
 
 	//大きさの設定
-	box_size = 64.0f;
+	box_size = 32.0f;
 
 	//初期画像の設定
-	image = anima[0];
+	image = animation[0];
+
+	//初期進行方向の設定
+	direction = Vector2D(1.0f, 0.0f);
 }
 
 //更新処理
 void WingEnemy::Update()
 {
-	location.x += 1.0f;     //位置情報の更新
+	location.x += 0.5f;
 
 	if (location.x >= 640.0f)
 	{
 		location.x = 0.0f;
 	}
+
 	//移動処理
-	//Movement();
+	Movement();
+
 	//アニメーション制御
 	AnimationControl();
 }
 //描画処理
 void WingEnemy::Draw()const
 {
-	//ウィングエネミー画像の描画
-	DrawRotaGraphF(location.x, 390, 0.5, radian, image, TRUE, flip_flag);
-	
-	//デバッグ用
-#if _DEBUG
-	//当たり判定の可視化
-	Vector2D box_collision_upper_left = location - (box_size / 2.0f);
-	Vector2D box_collision_lower_right = location + (box_size / 2.0f);
-	DrawBoxAA(box_collision_upper_left.x, box_collision_upper_left.y, box_collision_lower_right.x, box_collision_lower_right.y, GetColor(255, 0, 0), FALSE);
+	//画像反転フラグ
+	int flip_flag = FALSE;
 
-#endif
+	//進行方向によって、反転状態を決定する
+	if (direction.x > 0.0f)
+	{
+		flip_flag = FALSE;
+	}
+	else
+	{
+		flip_flag = FALSE;
+	}
 
+	//情報を基にハコテキ画像を描画する
+	DrawRotaGraphF(location.x, location.y, 0.5, radian, image, TRUE, flip_flag);
+
+	//親クラスの描画処理を呼び出す
+	__super::Draw();
 }
 
 //終了時処理
 void WingEnemy::Finalize()
 {
 	//使用した画像を開放する
-	DeleteGraph(anima[0]);
-	DeleteGraph(anima[1]);
+	DeleteGraph(animation[0]);
+	DeleteGraph(animation[1]);
 }
 
 //当たり判定通知処理
 void WingEnemy::OnHitCollision(GameObject* hit_object)
 {
+	if (dynamic_cast<WingEnemy*>(hit_object) != nullptr)   
+	{
+		BulletSeartch = false;
+	}
+	else if (dynamic_cast<Player*>(hit_object) != nullptr)   
+	{
+		BulletSeartch = false;
+	}
+	else
+	{
+		BulletSeartch = true;
+	}
+	//if (dynamic_cast<Bullet*>(hit_object))   //弾丸に当たった時にハコテキを消す処理
+	//{
+	//	direction = 0.0f;
+	//	box_size = 0.0f;
+	//	Finalize();
+
+	//}
 	//当たった時の処理
+	direction = 0.0f;
 }
 //移動処理
 void WingEnemy::Movement()
 {
-	//移動の速さ
-	Vector2D velocity = 0.0f;
+	//画面は時に到達したら、進行方向を反転する
+	//if (((location.x + direction.x) < box_size.x) || (640.0f - box_size.x) < (location.x + direction.x))
+	//{
+		//direction.x *= -1.0f;
+	//}
 
-	//左右移動
-	if (InputControl::GetKey(KEY_INPUT_LEFT))
-	{
-		velocity.x += -1.0f;
-		flip_flag = TRUE;
-	}
-	else if (InputControl::GetKey(KEY_INPUT_RIGHT))
-	{
-		velocity.x += 1.0f;
-		flip_flag = FALSE;
-	}
-	else
-	{
-		velocity.x += 0.0f;
-	}
+	//if (((location.y + direction.y) < box_size.y) || (480.0f - box_size.y) < (location.y + direction.y))
+	//{
+		//direction.y *= -1.0f;
+	//}
+
+
 	//現在の位置情報に速さを加算する
-	location += velocity;
+	location += direction;
 }
 
 //アニメーション制御
@@ -115,20 +141,20 @@ void WingEnemy::AnimationControl()
 	//フレームカウントを加算する
 	animation_count++;
 
-	//60フレーム目に到達したら
-	if (animation_count >= 60)
+	//30フレーム目に到達したら
+	if (animation_count >= 30)
 	{
 		//カウントのリセット
 		animation_count = 0;
 
 		//画像の切り替え
-		if (image == anima[0])
+		if (image == animation[0])
 		{
-			image = anima[1];
+			image = animation[1];
 		}
 		else
 		{
-			image = anima[0];
+			image = animation[0];
 		}
 	}
 }

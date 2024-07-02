@@ -4,8 +4,10 @@
 #include "../Objects/WingEnemy/WingEnemy.h"
 #include "../Objects/Bullet/Bullet.h"
 #include "../Objects/Harpy/Harpy.h"
+#include "../Objects/Fireball/Fireball.h"
 #include "../Utility/InputControl.h"
 #include "DxLib.h"
+#include <math.h>
 
 #define D_PIVOT_CENTER
 
@@ -25,17 +27,31 @@ Scene::~Scene()
 //初期化処理
 void Scene::Initialize()
 {
+	//スコア
+	Score = 0.0f;
+	DrawScore = 0;
+	B_flg = false;
 	//プレイヤーを生成する
 	CreateObject<Player>(Vector2D(320.0f, 240.0f));
 	//ウィングエネミーを生成する
-	CreateObject<WingEnemy>(Vector2D(320.0f, 240.0f));
-
+	CreateObject<WingEnemy>(Vector2D(0.0f, 140.0f));
+	//ハーピーを生成する
+	CreateObject<Harpy>(Vector2D(0.0f, 330.0f));
+	//ハコテキを生成する
+	CreateObject<Enemy>(Vector2D(40.0f, 400.0f));
 	
 }
 
 //更新処理
 void Scene::Update()
 {
+
+
+	DrawScore++;
+	if (DrawScore > Score) {
+		DrawScore = Score;
+	}
+
 	//シーンに存在するオブジェクトの更新処理
 	for (GameObject* obj : objects)
 	{
@@ -52,26 +68,77 @@ void Scene::Update()
 		}
 	}
 
-	//Zキーを押したら、ハコテキを生成する
-	if (InputControl::GetKeyDown(KEY_INPUT_Z))
+	//Cキーを押したら、ウィングエネミーを生成する
+	if (InputControl::GetKeyDown(KEY_INPUT_C))
 	{
-		CreateObject<Enemy>(Vector2D(100.0f, 0.0f));
+		CreateObject<WingEnemy>(Vector2D(0.0f, 140.0f));
 	}
+
+	///Zキーを押したら、ハコテキを生成する
+	//if (InputControl::GetKeyDown(KEY_INPUT_Z))
+	//{
+	//	CreateObject<Enemy>(Vector2D(40.0f, 400.0f));
+	//}
 
 	//Xキーを押したら、ハーピーを生成する
 	if (InputControl::GetKeyDown(KEY_INPUT_X))
 	{
-		CreateObject<Harpy>(Vector2D(100.0f, 0.0f));
+		CreateObject<Harpy>(Vector2D(0.0f, 330.0f));
 	}
 
 	//スペースキーを押したら、弾丸を生成する
-	if (InputControl::GetKeyDown(KEY_INPUT_SPACE)) {
+	if (InputControl::GetKeyDown(KEY_INPUT_SPACE)) 
+	{
+		if (B_flg == false) {
+			for (int i = 0; i < objects.size(); i++)
+			{
+				if (!(dynamic_cast<Player*>(objects[i]) == nullptr))
+				{
+					CreateObject<Bullet>(objects[i]->GetLocation());
+					B_flg = true;
+				}
+			}
+		}
+		
+	}
+	Vector2D location;
+	//弾丸が画面外にいったら弾丸を生成する
+	for (int i = 0; i < objects.size(); i++)
+	{
+		if (!(dynamic_cast<Bullet*>(objects[i]) == nullptr))
+		{
+			location=objects[i]->GetLocation();
+			if (location.y >= 480) {
+				this->objects.erase(objects.begin() + i);
+				B_flg = false;
+			}
+			
+		}
+	}
+
+	//Vを押したら、弾丸を生成する
+	if (InputControl::GetKeyDown(KEY_INPUT_V)) 
+	{
 		for (int i = 0; i < objects.size(); i++)
 		{
-			if (!(dynamic_cast<Player*>(objects[i]) == nullptr))
+			if (!(dynamic_cast<Enemy*>(objects[i]) == nullptr))
 			{
-				CreateObject<Bullet>(objects[i]->GetLocation());
+				CreateObject<Fireball>(objects[i]->GetLocation());
 			}
+		}
+	}
+
+	//敵が完璧に消える処理
+	for (int i = 1; i < objects.size(); i++)
+	{
+		if (objects[i]->DeleteObject() == true)
+		{
+			this->objects.erase(objects.begin() + i);
+			Score += 0.5f;
+			CreateObject<Enemy>(Vector2D(0.0f, 200.0f));
+			B_flg = false;
+			CreateObject<Harpy>(Vector2D(0.0f, 330.0f));
+			CreateObject<WingEnemy>(Vector2D(0.0f, 140.0f));
 		}
 	}
 	
@@ -85,11 +152,16 @@ void Scene::Draw() const
 	{
 		obj->Draw();
 	}
+	DrawFormatString(500, 5, GetColor(255, 255, 255), "得点：%3d", DrawScore);
+	//DrawFillBox(150, 100, 150 + DrawScore, 116, GetColor(0, 255, 255));
+	//DrawLineBox(150, 100, 450, 116, GetColor(255, 255, 255));
 }
 
 //終了時処理
 void Scene::Finalize()
 {
+
+
 	//動的配列が空なら処理を終了する
 	if (objects.empty())
 	{
@@ -104,6 +176,7 @@ void Scene::Finalize()
 
 	//動的配列の解放
 	objects.clear();
+
 }
 
 #ifdef D_PIVOT_CENTER
@@ -123,6 +196,7 @@ void Scene::HitCheckObject(GameObject* a, GameObject* b)
 		//当たったことをオブジェクトに通知する
 		a->OnHitCollision(b);
 		b->OnHitCollision(a);
+		
 	}
 }
 

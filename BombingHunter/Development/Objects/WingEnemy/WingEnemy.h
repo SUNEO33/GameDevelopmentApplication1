@@ -4,9 +4,9 @@
 class WingEnemy : public GameObject
 {
 private:
-	int anima[2];     //アニメーション画像
+	int animation[2];     //アニメーション画像
 	int animation_count;  //アニメーション時間
-	int flip_flag;        //反転フラグ
+	Vector2D direction;      //反転フラグ
 
 public:
 	WingEnemy();
@@ -26,5 +26,5 @@ private:
 	//アニメーション制御
 	void AnimationControl();
 
-};
 
+};

@@ -1,5 +1,8 @@
 #include "Bullet.h"
 #include "DxLib.h"
+#include "../../Objects/Enemy/Enemy.h"
+#include "../../Objects/Harpy/Harpy.h"
+#include "../../Objects/Player/Player.h"
 
 
 //コンストラクタ
@@ -33,7 +36,7 @@ void Bullet::Initialize()
 	radian = -1.6f;
 
 	//大きさの設定
-	box_size = 64.0f;
+	box_size = 32.0f;
 
 	//初期画像の設定
 	image = animation[0];
@@ -45,6 +48,9 @@ void Bullet::Initialize()
 //更新処理
 void Bullet::Update()
 {
+	//弾丸の落ちるスピード
+	location.y += 1.0f;
+
 	//移動処理
 	Movement();
 
@@ -85,6 +91,25 @@ void Bullet::Finalize()
 //当たり判定通知処理
 void Bullet::OnHitCollision(GameObject* hit_object)
 {
+	if (dynamic_cast<Bullet*>(hit_object)!=nullptr)   
+	{
+		BulletSeartch = false;
+	}
+	else if (dynamic_cast<Player*>(hit_object) != nullptr)  
+	{
+		BulletSeartch = false;
+	}
+	else
+	{
+		BulletSeartch = true;
+	}
+	//if (dynamic_cast<Harpy*>(hit_object))   //ハーピーに当たった時に弾丸を消す処理
+	//{
+	//	direction = 0.0f;
+	//	box_size = 0.0f;
+	//	Finalize();
+
+	//}
 	//当たった時の処理
 	//direction = 0.0f;
 }

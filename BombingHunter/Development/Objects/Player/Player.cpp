@@ -34,7 +34,7 @@ void Player::Initialize()
 	radian = 0.0f;
 
 	//‘å‚«‚³‚Ìİ’è
-	box_size = 64.0f;
+	box_size = 32.0f;
 
 	//‰Šú‰æ‘œ‚Ìİ’è
 	image = animation[0];
@@ -59,7 +59,7 @@ void Player::Draw()const
 	//“–‚½‚è”»’è‚Ì‰Â‹‰»
 	Vector2D box_collision_upper_left = location - (box_size / 2.0f);
 	Vector2D box_collision_lower_right = location + (box_size / 2.0f);
-	DrawBoxAA(box_collision_upper_left.x, box_collision_upper_left.y, box_collision_lower_right.x, box_collision_lower_right.y, GetColor(255, 0, 0), FALSE);
+	//DrawBoxAA(box_collision_upper_left.x, box_collision_upper_left.y, box_collision_lower_right.x, box_collision_lower_right.y, GetColor(255, 0, 0), FALSE);
 
 #endif
 
@@ -87,12 +87,12 @@ void Player::Movement()
 	//¶‰EˆÚ“®
 	if (InputControl::GetKey(KEY_INPUT_LEFT))
 	{
-		velocity.x += -1.0f;
+		velocity.x += -3.0f;
 		flip_flag = TRUE;
 	}
 	else if (InputControl::GetKey(KEY_INPUT_RIGHT))
 	{
-		velocity.x += 1.0f;
+		velocity.x += 3.0f;
 		flip_flag = FALSE;
 	}
 	else
@@ -102,12 +102,12 @@ void Player::Movement()
 	//ã‰ºˆÚ“®
 	if (InputControl::GetKey(KEY_INPUT_UP))
 	{
-		velocity.y += -1.0f;
+		velocity.y += -3.0f;
 		flip_flag = TRUE;
 	}
 	else if (InputControl::GetKey(KEY_INPUT_DOWN))
 	{
-		velocity.y += 1.0f;
+		velocity.y += 3.0f;
 		flip_flag = FALSE;
 	}
 	else

@@ -7,11 +7,16 @@ GameObject::GameObject() :
 	box_size(0.0f),
 	radian(0.0),
 	image(NULL),
-	sound(NULL)
+	sound(NULL),
+	BulletSeartch(false)		
 {
 
 }
 
+bool GameObject::DeleteObject()
+{
+	return this->BulletSeartch;
+}
 //デストラクタ
 GameObject::~GameObject()
 {
@@ -20,7 +25,7 @@ GameObject::~GameObject()
 //初期化処理
 void GameObject::Initialize()
 {
-
+	
 }
 //更新処理
 void GameObject::Update()
@@ -35,7 +40,7 @@ void GameObject::Draw()const
 #ifdef D_PIVOT_CENTER
 	Vector2D tl = location - (box_size / 2.0f);
 	Vector2D br = location + (box_size / 2.0f);
-	DrawBoxAA(tl.x, tl.y, br.x, br.y, GetColor(255, 0, 0), FALSE);
+	//DrawBoxAA(tl.x, tl.y, br.x, br.y, GetColor(255, 0, 0), FALSE);
 #else
 	Vector2D tl = location;
 	Vector2D br = location + box_size;

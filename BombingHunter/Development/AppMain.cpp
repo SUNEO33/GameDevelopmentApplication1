@@ -21,6 +21,9 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		//異常を通知
 		return -1;
 	}
+	//制限時間
+	int timediff;
+	LONGLONG timelimit = GetNowHiPerformanceCount() + 30000000;
 	// BGMの読み込み
 	background_sound = LoadSoundMem("Resource/sounds/Evaluation/BGM_arrows.wav");
 
@@ -35,6 +38,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 	try
 	{
+
 		//BGMの再生
 		PlaySoundMem(background_sound, DX_PLAYTYPE_BACK, FALSE);
 		//シーンの初期化
@@ -50,15 +54,27 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 			//シーンの更新処理
 			scene->Update();
 
+			timediff = int(timelimit - GetNowHiPerformanceCount());
+
 			//画面の初期化
 			ClearDrawScreen();
+
 
 			//背景画像
 			back_img1 = LoadGraph("Resource/Images/BackGround.png");
 			DrawGraph(0, -180, back_img1, TRUE);
 
+			//時間表示
+			DrawFormatString(5, 5, GetColor(255, 255, 255), "%02d'%02d'%d%d", timediff / 60000000, (timediff % 60000000) / 1000000, ((timediff % 60000000) % 1000000) / 100000, (((timediff % 60000000) % 1000000) % 100000) / 10000);
+
+			//制限時間が0になったらゲーム終了させる
+			if (timediff < 0) {
+				break;
+
+			}
 			//シーンの描画処理
 			scene->Draw();
+			
 
 
 			//裏画面の内容を表画面に反映する
@@ -80,7 +96,8 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		delete scene;
 		scene = nullptr;
 	}
-
+	
+		
 	//DXライブラリの終了時処理
 	DxLib_End();
 

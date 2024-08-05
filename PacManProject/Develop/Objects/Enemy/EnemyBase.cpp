@@ -46,7 +46,7 @@ void EnemyBase::Update(float delta_second)
 		AnimationControl(delta_second);
 		break;
 	case eEnemyState::CHASE:
-		//
+		
 	case eEnemyState::DIE:
 		// 死亡中のアニメーション
 		animation_time += delta_second;
@@ -104,7 +104,7 @@ void EnemyBase::OnHitCollision(GameObjectBase* hit_object)
 	}
 
 
-	// 当たったオブジェクトがイジケだったら
+	// 当たったオブジェクトがプレイヤーだったら
 	if (hit_object->GetCollision().object_type == eObjectType::player)
 	{
 		enemy_state = eEnemyState::BACKHOME;
@@ -253,4 +253,5 @@ void EnemyBase::AnimationControl(float delta_second)
 
 	}
 }
+
 

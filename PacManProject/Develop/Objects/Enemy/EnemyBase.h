@@ -3,13 +3,13 @@
 #include "../GameObject.h"
 
 
-// エネミー状態
+ //エネミー状態
 enum eEnemyState
 {
-	BACKHOME,		//元の場所に戻る
-	TERRITORY,      //縄張り
+	BACKHOME,	//元の場所に戻る
+	TERRITORY,    //縄張り
 	CHASE,		//追っかけ状態
-	DIE,		// 死亡状態
+	DIE,         // 死亡状態
 };
 
 
